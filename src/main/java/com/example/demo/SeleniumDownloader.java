@@ -5,11 +5,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.HashMap;
 
 public class SeleniumDownloader {
@@ -18,13 +17,16 @@ public class SeleniumDownloader {
     private static WebDriver driver;
     private static WebDriverWait wait;
 
+    public static void main(String[] args) {
+        run();
+    }
     public static void run() {
 
         try {
 
             ChromeOptions options = new ChromeOptions();
 
-            options.addArguments("--headless");
+//            options.addArguments("--headless");
             options.addArguments("--start-maximized");
             options.addArguments("--disable-gpu");
             options.addArguments("--no-sandbox");
@@ -40,13 +42,8 @@ public class SeleniumDownloader {
             chromePrefs.put("profile.default_content_settings.popups", 0);
             chromePrefs.put("download.default_directory", downloadFilepath);
             options.setExperimentalOption("prefs", chromePrefs);
-            DesiredCapabilities cap = new DesiredCapabilities();
-            cap.setBrowserName("chrome");
-            cap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-            cap.setCapability(ChromeOptions.CAPABILITY, options);
-            driver = new ChromeDriver(cap);
-
-            wait = new WebDriverWait(driver, 10);
+            driver = new ChromeDriver(options);
+            wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
             driver.get(url);
             waitAndClick(By.id("CybotCookiebotDialogBodyButtonAccept"));
