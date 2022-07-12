@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -36,12 +37,14 @@ public class SeleniumDownloader {
             options.addArguments("--proxy-server='direct://'");
             options.addArguments("--proxy-bypass-list=*");
             options.addArguments("--disable-dev-shm-usage");
-
+            System.setProperty("webdriver.chrome.driver","C:\\dev\\sprint-boot-selenium\\src\\main\\java\\com\\example\\demo\\chromedriver.exe");
+//            options.setBinary("C:\\dev\\sprint-boot-selenium\\src\\main\\java\\com\\example\\demo\\chromebin");
             String downloadFilepath = "C:\\dev\\temp";
             HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
             chromePrefs.put("profile.default_content_settings.popups", 0);
             chromePrefs.put("download.default_directory", downloadFilepath);
             options.setExperimentalOption("prefs", chromePrefs);
+
             driver = new ChromeDriver(options);
             wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -53,16 +56,18 @@ public class SeleniumDownloader {
             waitAndClick(By.xpath("//a[contains(text(), 'CSV')]"));
             System.out.println("downloading csv");
             Thread.sleep(10000);
-        } catch (Exception e) {
             driver.quit();
+        } catch (InterruptedException | ElementClickInterceptedException e) {
+            driver.quit();
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        driver.quit();
     }
 
-    public static void waitAndClick(By by) throws InterruptedException {
-        wait.until(ExpectedConditions.elementToBeClickable(by));
+    public static void waitAndClick(By by) throws InterruptedException, ElementClickInterceptedException {
+        wait.until(driver -> ExpectedConditions.elementToBeClickable(by));
         Thread.sleep(500);
         WebElement element = driver.findElement(by);
         element.click();
